@@ -1,0 +1,56 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker to use Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/order-taking-api/order-service:latest .
+          docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/order-taking-api/order-service:latest
+
+  deploy:
+    name: Deploy to GKE
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Get GKE Credentials
+        run: gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
