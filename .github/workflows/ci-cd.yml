@@ -49,6 +49,7 @@ jobs:
   deploy:
     name: Deploy to GKE
     runs-on: ubuntu-latest
+    needs: build
     steps:
       # Step 1 - Checkout Repository
       - name: Checkout code
