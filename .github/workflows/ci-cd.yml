@@ -49,42 +49,30 @@ jobs:
   deploy:
     name: Deploy to GKE
     runs-on: ubuntu-latest
-    needs: build
-
     steps:
-      # Checkout the repository
-      - name: Checkout Repository
+      # Step 1 - Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Authenticate with Google Cloud
+      # Step 2 - Authenticate with Google Cloud
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # Install kubectl
-      - name: Install kubectl
+      # Step 3 - Update and install dependencies (gcloud, kubectl, auth-plugin)
+      - name: Install gke-gcloud-auth-plugin and kubectl
         run: |
           sudo apt-get update
-          sudo apt-get install -y kubectl
+          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin kubectl
 
-      # Install gke-gcloud-auth-plugin
-      - name: Install gke-gcloud-auth-plugin
+      # Step 4 - Configure kubectl to connect with GKE
+      - name: Configure kubectl
         run: |
-          gcloud components update
-          gcloud components install gke-gcloud-auth-plugin
           export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-
-      # Authenticate kubectl with GKE
-      - name: Authenticate kubectl with GKE
-        run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --region ${{ secrets.GKE_REGION }}
 
-      # Check for YAML files
-      - name: Verify YAML Files
-        run: ls -R k8s/
-
-      # Deploy to GKE
+      # Step 5 - Apply Kubernetes manifests
       - name: Deploy to GKE
         run: |
           kubectl apply -f k8s/deployment.yaml
