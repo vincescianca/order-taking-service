@@ -55,5 +55,9 @@ jobs:
 
       - name: Deploy to GKE
         run: |
+          echo "Current working directory:"
+          pwd  # Mostra la directory attuale
+          echo "Files in the directory:"
+          ls -la  # Elenca tutti i file nella directory corrente
           kubectl apply -f deployment.yaml
           kubectl apply -f service.yaml
