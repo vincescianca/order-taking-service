@@ -12,7 +12,7 @@ RUN mvn dependency:go-offline
 COPY src ./src
 
 # Copia il github
-COPY .github ./.github
+COPY k8s ./k8s
 
 # Compilazione e pacchetto applicazione. Skippa i test per velocizzare.
 RUN mvn clean package -DskipTests

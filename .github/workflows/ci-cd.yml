@@ -55,17 +55,7 @@ jobs:
           echo "Listing all files and directories recursively:"
           ls -R
 
-      - name: Ensure deployment.yaml exists
-        run: |
-          if [ -f deployment.yaml ]; then
-            echo "deployment.yaml exists!"
-          else
-            echo "deployment.yaml is missing!"
-            exit 1
-          fi
-
       - name: Deploy to GKE
         run: |
-          kubectl apply -f deployment.yaml
-          
-            kubectl apply -f service.yaml
+          kubectl apply -f k8s/deployment.yaml      
+          kubectl apply -f k8s/service.yaml
