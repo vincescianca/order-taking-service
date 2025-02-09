@@ -40,24 +40,30 @@ jobs:
           docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/order-service:latest
 
   deploy:
-    name: Deploy to GKE
-    runs-on: ubuntu-latest
-    needs: build
+    deploy:
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Authenticate with GCP
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
 
-      - name: Get GKE Credentials
-        run: gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
+        - name: Debug repository structure
+          run: |
+            echo "Current working directory:"
+            pwd
+            echo "Listing all files and directories recursively:"
+            ls -R
 
-      - name: Deploy to GKE
-        run: |
-          echo "Current working directory:"
-          pwd  # Mostra la directory attuale
-          echo "Files in the directory:"
-          ls -la  # Elenca tutti i file nella directory corrente
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
+        - name: Ensure deployment.yaml exists
+          run: |
+            if [ -f deployment.yaml ]; then
+              echo "deployment.yaml exists!"
+            else
+              echo "deployment.yaml is missing!"
+              exit 1
+            fi
+
+        - name: Deploy to GKE
+          run: |
+            kubectl apply -f deployment.yaml            
+            kubectl apply -f service.yaml
