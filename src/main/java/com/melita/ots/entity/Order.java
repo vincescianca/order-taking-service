@@ -4,8 +4,6 @@ import com.melita.ots.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 @Entity
 @Data
 public class Order {
@@ -13,8 +11,8 @@ public class Order {
     private Long id;
     @ManyToOne
     private Customer customer;
-    @OneToMany
-    private List<Product> product;
+    @ManyToOne
+    private Product product;
+    @Enumerated(EnumType.ORDINAL)
     private OrderStatus status;
-
 }

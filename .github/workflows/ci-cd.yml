@@ -61,3 +61,8 @@ jobs:
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+
+      # Create/Update configMap
+      - name: Apply ConfigMap from Repository
+        run: |
+          kubectl apply -f k8s/config/configmap.yml
