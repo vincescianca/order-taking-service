@@ -40,30 +40,29 @@ jobs:
           docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/order-service:latest
 
   deploy:
-    deploy:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-        - name: Debug repository structure
-          run: |
-            echo "Current working directory:"
-            pwd
-            echo "Listing all files and directories recursively:"
-            ls -R
+      - name: Debug repository structure
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Listing all files and directories recursively:"
+          ls -R
 
-        - name: Ensure deployment.yaml exists
-          run: |
-            if [ -f deployment.yaml ]; then
-              echo "deployment.yaml exists!"
-            else
-              echo "deployment.yaml is missing!"
-              exit 1
-            fi
+      - name: Ensure deployment.yaml exists
+        run: |
+          if [ -f deployment.yaml ]; then
+            echo "deployment.yaml exists!"
+          else
+            echo "deployment.yaml is missing!"
+            exit 1
+          fi
 
-        - name: Deploy to GKE
-          run: |
-            kubectl apply -f deployment.yaml            
-            kubectl apply -f service.yaml
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f deployment.yaml        
+          kubectl apply -f service.yaml
