@@ -12,7 +12,7 @@ RUN mvn dependency:go-offline
 COPY src ./src
 
 # Copia il github
-COPY .github /app/.github
+COPY .github ./.github
 
 # Compilazione e pacchetto applicazione. Skippa i test per velocizzare.
 RUN mvn clean package -DskipTests
