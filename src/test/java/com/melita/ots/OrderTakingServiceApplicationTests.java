@@ -1,4 +1,4 @@
-package com.melita.order_taking_service;
+package com.melita.ots;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
