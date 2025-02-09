@@ -42,16 +42,7 @@ jobs:
           docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/order-service:latest .
           docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPO_NAME }}/order-service:latest
 
-      # Install kubectl and configure GKE
-      - name: Install kubectl and gke-gcloud-auth-plugin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y kubectl
-          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
-          export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --region ${{ secrets.GKE_REGION }}        
-          # Deploy
-
+      # Deploy
       - name: Deploy to GKE
         run: |
           kubectl apply -f k8s/deployment.yaml
