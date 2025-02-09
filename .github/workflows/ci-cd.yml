@@ -73,12 +73,6 @@ jobs:
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --region ${{ secrets.GKE_REGION }}
 
-      # Verify kubectl configuration
-      - name: Verify kubectl Setup
-        run: |
-          kubectl cluster-info
-          kubectl get nodes
-
       # Check for YAML files
       - name: Verify YAML Files
         run: ls -R k8s/
