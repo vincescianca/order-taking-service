@@ -1,11 +1,11 @@
-package com.melita.ots.entity;
+package com.melita.ots.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Data;
 
-@Entity
-public class Product {
-        @Id
+@Data
+public class ProductDTO {
         private Long id;
         private String name;
 }
