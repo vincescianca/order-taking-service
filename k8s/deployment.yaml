@@ -22,3 +22,5 @@ spec:
           env:
             - name: SPRING_DATASOURCE_ENABLED
               value: "false"
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
