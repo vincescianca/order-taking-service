@@ -1,15 +1,21 @@
 package com.melita.ots.controller;
 
-import com.melita.ots.cache.InMemoryCache;
 import com.melita.ots.dto.OrderDTO;
+import com.melita.ots.dto.ProductDTO;
 import com.melita.ots.service.OrderService;
+import com.melita.ots.service.ProductService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -18,11 +24,11 @@ public class OrderController {
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     private final OrderService orderService;
-    private final InMemoryCache productCache;
+    private final ProductService productService;
 
-    public OrderController(OrderService orderService, InMemoryCache productCache) {
+    public OrderController(OrderService orderService, ProductService productService) {
         this.orderService = orderService;
-        this.productCache = productCache;
+        this.productService = productService;
     }
 
     @PostMapping
@@ -47,12 +53,11 @@ public class OrderController {
         }
     }
 
-     /**
+    /**
      * Validate product IDs by checking their existence in the cache.
      */
     private boolean areProductsValid(List<Long> productIds) {
-        return productIds.stream()
-                .allMatch(productId -> productCache.getAllProducts().stream()
-                        .anyMatch(product -> product.getId().equals(productId)));
+        Set<Long> availableProducts = productService.getProducts().stream().map(ProductDTO::getId).collect(Collectors.toSet());
+        return availableProducts.containsAll(productIds);
     }
 }

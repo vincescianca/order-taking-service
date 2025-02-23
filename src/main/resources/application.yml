@@ -1,6 +1,8 @@
 spring:
   application:
     name: order-taking
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 springdoc:
   api-docs:
     enabled: true

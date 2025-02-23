@@ -2,3 +2,5 @@ spring:
   config:
     name: order-taking
     import: configserver:http://34.118.25.195
+server:
+  port: 8081
